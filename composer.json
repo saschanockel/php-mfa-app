@@ -1,0 +1,23 @@
+{
+  "name": "saschanockel/php-mfa-app",
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "saschanockel\\PhpMfaApp\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Sascha Nockel",
+      "email": "mail@saschanockel.de"
+    }
+  ],
+  "require": {
+    "doctrine/orm": "^2.11",
+    "symfony/cache": "^5.4",
+    "doctrine/annotations": "^1.13",
+    "bramus/router": "^1.6",
+    "twig/twig": "^3.0"
+  }
+}
