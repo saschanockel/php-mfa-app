@@ -32,6 +32,11 @@ class User
     private $password;
 
     /**
+     * @Column(type="string", name="otp_secret", nullable=true)
+     */
+    private $otpSecret;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -69,5 +74,21 @@ class User
     public function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOtpSecret(): null|string
+    {
+        return $this->otpSecret;
+    }
+
+    /**
+     * @param string $otpSecret
+     */
+    public function setOtpSecret(string $otpSecret): void
+    {
+        $this->otpSecret = $otpSecret;
     }
 }

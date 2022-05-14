@@ -1,2 +1,4 @@
 .idea/
 vendor/
+public/img/*
+!public/img/.gitkeep

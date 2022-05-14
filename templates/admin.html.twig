@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<h3>Logged in!</h3>
+<h3>Logged in! Configure your Second Factor ;)</h3>
+<img src="img/qrcode.png" alt="Girl in a jacket" width="300" height="300">
+<form action="/admin" method="post">
+    <div>
+        <label for="oneTimePassword"><b>One Time Password</b></label>
+        <label>
+            <input type="text" placeholder="Enter your code" name="oneTimePassword" required>
+        </label>
+        <p>If you register a One Time Password you won't be able to log in without it from then on.</p>
+        <button type="submit">Register OTP</button>
+    </div>
+</form>
 <form action="/logout" method="post">
     <div>
         <button type="submit">Log out</button>
