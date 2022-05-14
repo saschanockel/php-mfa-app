@@ -37,6 +37,7 @@ $router->before('GET', '/admin', function () {
 $router->get('/login', function () use ($twig) {
     if (isset($_SESSION['username'])) {
         header('location: /admin');
+        exit();
     } else {
         echo $twig->render('login.html.twig');
     }
@@ -57,17 +58,20 @@ $router->post('/login', function () use ($em) {
                 session_start();
                 $_SESSION['username'] = $_POST['username'];
                 header('location: /admin');
+                exit();
             }
         } elseif (password_verify($_POST['password'], $user->getPassword())) {
             session_start();
             $_SESSION['username'] = $_POST['username'];
             header('location: /admin');
+            exit();
         }
     }
 
     header('location: /login');
     exit();
 });
+
 $router->get('/signup', function () use ($twig) {
     echo $twig->render('signup.html.twig');
 });
@@ -83,14 +87,20 @@ $router->post('/signup', function () use ($em) {
 
         $em->persist($user);
         $em->flush($user);
+
+        header('location: /login');
+        exit();
     } else {
         header('location: /signup');
         exit();
     }
 });
+
 $router->post('/logout', function () use ($em) {
     session_destroy();
+
     header('location: /login');
+    exit();
 });
 
 $router->get('/admin', function () use ($twig) {
@@ -106,13 +116,14 @@ $router->get('/admin', function () use ($twig) {
     // save the QR code, so it can be displayed on the website
     $writer->writeFile($otp->getProvisioningUri(), '/var/www/html/public/img/qrcode.png');
     /**
-     * The OTP secret is stored in plain text since the server needs to know it to calculate the TOTP Token to compare with the user provided one.
+     * The OTP secret is stored in plain text since the server needs to know it to calculate the TOTP Token to compare with the one provided by the user.
      * Also the OTP secret represents something you "own", in combination with something you "know" (the hashed password which is not readable by the server)
      * this procedure is safe and provides additional security against account theft and brute force attacks.
      *
-     * We store the secret in the session so we can verify it if the user registers an OTP without calling the DB
+     * We store the secret in the session, so we can verify it if the user registers an OTP without calling the DB.
      */
     $_SESSION['otpSecret'] = $otp->getSecret();
+
     echo $twig->render('admin.html.twig');
 });
 $router->post('/admin', function () use ($twig, $em) {
