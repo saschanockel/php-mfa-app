@@ -2,16 +2,16 @@
 
 require_once '../vendor/autoload.php';
 
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Bramus\Router\Router;
+use OTPHP\TOTP;
 use saschanockel\PhpMfaApp\Entities\User;
 use saschanockel\PhpMfaApp\Services\Database;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use OTPHP\TOTP;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
 
 // Initialize template engine
 $loader = new FilesystemLoader('/var/www/html/templates');
