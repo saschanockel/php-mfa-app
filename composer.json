@@ -19,7 +19,7 @@
     "doctrine/annotations": "^1.13",
     "bramus/router": "^1.6",
     "twig/twig": "^3.0",
-    "spomky-labs/otphp": "^9.1",
+    "spomky-labs/otphp": "^10.0",
     "bacon/bacon-qr-code": "^2.0",
     "ext-imagick": "3.*"
   }
