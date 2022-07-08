@@ -9,7 +9,7 @@ COPY ./composer.lock ./composer.lock
 
 RUN composer install
 
-FROM php:8.1.2-fpm-alpine AS production
+FROM php:8.2.0alpha3-fpm-alpine AS production
 
 # Update image packages
 RUN apk update && apk upgrade
@@ -35,7 +35,7 @@ USER www-data
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]
 
-FROM php:8.1.2-fpm-alpine AS development
+FROM php:8.2.0alpha3-fpm-alpine AS development
 
 # Update image packages
 RUN apk update && apk upgrade
