@@ -34,6 +34,11 @@ $router->before('GET', '/admin', function () {
 });
 
 // Define routes
+$router->get('/', function () {
+    header('location: /login');
+    exit();
+});
+
 $router->get('/login', function () use ($twig) {
     if (isset($_SESSION['username'])) {
         header('location: /admin');
@@ -96,7 +101,7 @@ $router->post('/signup', function () use ($em) {
     }
 });
 
-$router->post('/logout', function () use ($em) {
+$router->post('/logout', function () {
     session_destroy();
 
     header('location: /login');
