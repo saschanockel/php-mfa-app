@@ -14,6 +14,7 @@
     }
   ],
   "require": {
+    "ext-imagick": "*",
     "doctrine/orm": "2.13.3",
     "symfony/cache": "6.1.5",
     "doctrine/annotations": "1.13.3",
@@ -21,6 +22,6 @@
     "twig/twig": "3.4.3",
     "spomky-labs/otphp": "11.0.2",
     "bacon/bacon-qr-code": "2.0.7",
-    "ext-imagick": "*"
+    "defuse/php-encryption": "^2.3"
   }
 }

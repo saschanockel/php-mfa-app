@@ -32,7 +32,7 @@ class User
     private $password;
 
     /**
-     * @Column(type="string", name="otp_secret", nullable=true)
+     * @Column(type="text", name="otp_secret", nullable=true)
      */
     private $otpSecret;
 

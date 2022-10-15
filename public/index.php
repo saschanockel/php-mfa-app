@@ -7,6 +7,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Bramus\Router\Router;
+use Defuse\Crypto\Crypto;
 use OTPHP\TOTP;
 use saschanockel\PhpMfaApp\Entities\User;
 use saschanockel\PhpMfaApp\Services\Database;
@@ -26,11 +27,10 @@ $em = Database::getEntityManager();
 // Define authentication middleware
 $router->before('GET', '/admin', function () {
     if (isset($_SESSION['username'])) {
-        return true;
-    } else {
-        header('location: /login');
-        exit();
+        return;
     }
+    header('location: /login');
+    exit();
 });
 
 // Define routes
@@ -43,9 +43,8 @@ $router->get('/login', function () use ($twig) {
     if (isset($_SESSION['username'])) {
         header('location: /admin');
         exit();
-    } else {
-        echo $twig->render('login.html.twig');
     }
+    echo $twig->render('login.html.twig');
 });
 $router->post('/login', function () use ($em) {
     if (isset($_POST['username']) && isset($_POST['password'])) {
@@ -57,7 +56,7 @@ $router->post('/login', function () use ($em) {
         $user = $query->getSingleResult();
 
         if ($user->getOtpSecret()) {
-            $otp = TOTP::create($user->getOtpSecret());
+            $otp = TOTP::create(Crypto::decryptWithPassword($user->getOtpSecret(), getenv('SECRET')));
             // If the user has a configured OTP secret verify it together with the password
             if (password_verify($_POST['password'], $user->getPassword()) && $otp->verify($_POST['oneTimePassword'])) {
                 session_start();
@@ -120,19 +119,13 @@ $router->get('/admin', function () use ($twig) {
     $writer = new Writer($renderer);
     // save the QR code, so it can be displayed on the website
     $writer->writeFile($otp->getProvisioningUri(), '/var/www/html/public/img/qrcode.png');
-    /**
-     * The OTP secret is stored in plain text since the server needs to know it to calculate the TOTP Token to compare with the one provided by the user.
-     * Also the OTP secret represents something you "own", in combination with something you "know" (the hashed password which is not readable by the server)
-     * this procedure is safe and provides additional security against account theft and brute force attacks.
-     *
-     * We store the secret in the session, so we can verify it if the user registers an OTP without calling the DB.
-     */
-    $_SESSION['otpSecret'] = $otp->getSecret();
+    // We store the secret in the session, so we can verify it if the user registers an OTP without calling the DB.
+    $_SESSION['otpSecret'] = Crypto::encryptWithPassword($otp->getSecret(), getenv('SECRET'));
 
     echo $twig->render('admin.html.twig');
 });
 $router->post('/admin', function () use ($twig, $em) {
-    $otp = TOTP::create($_SESSION['otpSecret']);
+    $otp = TOTP::create(Crypto::decryptWithPassword($_SESSION['otpSecret'], getenv('SECRET')));
     if ($otp->verify($_POST['oneTimePassword'])) {
         // If the generated passcode is ok we can save the secret permanently
         $query = $em->createQuery('SELECT u FROM \saschanockel\PhpMfaApp\Entities\User u WHERE u.username = ?1');
@@ -140,10 +133,12 @@ $router->post('/admin', function () use ($twig, $em) {
         /* @var User $user */
         $user = $query->getSingleResult();
 
+        // Store the encrypted secret
         $user->setOtpSecret($_SESSION['otpSecret']);
         $em->persist($user);
         $em->flush($user);
     }
+    unset($_SESSION['otpSecret']);
 
     echo $twig->render('admin.html.twig');
 });
