@@ -19,7 +19,7 @@
     "symfony/cache": "6.1.5",
     "doctrine/annotations": "1.13.3",
     "bramus/router": "1.6.1",
-    "twig/twig": "3.4.3",
+    "twig/twig": "3.19.0",
     "spomky-labs/otphp": "11.0.2",
     "bacon/bacon-qr-code": "2.0.7",
     "defuse/php-encryption": "2.3.1"
